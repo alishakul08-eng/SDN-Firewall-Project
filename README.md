@@ -65,6 +65,9 @@ Ping Results: h1 ping h2 shows a 0% packet loss, confirming that general network
 ![Observation](screenshots/observation.png)
 Performance Metrics: The iperf results show high-speed throughput (19.4 Gbits/sec), proving the firewall logic does not bottleneck the network performance.
 
+![Wireshark Analysis](screenshots/wireshark.png)
+Wireshark Analysis: Packet capture shows TCP SYN retransmissions from Host 1. This confirms the switch is dropping the packets silently without sending a reset, successfully blocking the HTTP handshake.
+
 ![Blocking Controller](screenshots/blocking_controller.png)
 Controller Status: The Ryu controller terminal shows the active monitoring and instantiation of the firewall application.
 
