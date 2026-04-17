@@ -68,7 +68,7 @@ Performance Metrics: The iperf results show high-speed throughput (19.4 Gbits/se
 ![Blocking Controller](screenshots/blocking_controller.png)
 Controller Status: The Ryu controller terminal shows the active monitoring and instantiation of the firewall application.
 
-![Blocking Mininet](screenshots/blocking_mininet.jpg)
+![Blocking Mininet](screenshots/blocking_mininet.png)
 Functional Correctness: The Mininet console shows the h1 curl command hanging, demonstrating successful blocking of HTTP traffic for the unauthorized host.
 
 ------------------------------------------------------------------------
