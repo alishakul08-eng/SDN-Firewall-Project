@@ -1,114 +1,103 @@
+This is a professionally structured README for your GitHub repository. It includes all the required sections—Student Information, Project Overview, Setup, and Proof of Execution—while keeping it concise and "clean" for a submission.
+
+---
+
 # SDN-Firewall Project
 
 ## Student Information
+* **Name:** Alisha Kulshrestha
+* **SRN:** PES1UG24CS049
 
-- Alisha Kulshrestha -- PES1UG24CS049
-- University: PES University
+---
 
-------------------------------------------------------------------------
+## Project Overview
+This project implements a **Granular Layer-4 SDN Firewall** using the **Ryu controller** and **Mininet**. It demonstrates the core SDN principle of decoupling the control and data planes to enforce security policies at the network edge.
 
-# Project Overview
+### Key Functionalities:
+* **Centralized Management:** Security logic resides entirely within the Ryu controller.
+* **Dynamic Policy Enforcement:** Pushing OpenFlow 1.3 rules to switch hardware.
+* **Protocol Filtering:** Selective blocking of **TCP Port 80 (HTTP)** while permitting ICMP (Ping).
+* **Identity Awareness:** Filtering based on unique Host MAC addresses.
 
-This project implements a Granular Layer-4 SDN Firewall using the Ryu controller and Mininet. The system demonstrates the core SDN principle of decoupling the control and data planes to enforce security policies at the network edge.
+---
 
-Key functionalities include:
-- Centralized Management: Security logic resides in the Ryu controller.
-- Dynamic Policy Enforcement: Pushing OpenFlow 1.3 rules to switch hardware.
-- Protocol Filtering: Selective blocking of TCP Port 80 (HTTP) while permitting ICMP.
-- Identity Awareness: Filtering based on unique Host MAC addresses.
+## Setup and Execution Steps
 
-------------------------------------------------------------------------
-
-# Build and Run Instructions
-
-## Prerequisites
+### 1. Prerequisites
 Ensure Ryu and Mininet are installed on your Ubuntu VM.
 
-------------------------------------------------------------------------
-
-## Start the Controller
+### 2. Start the Controller
 In a dedicated terminal, launch the firewall application:
-
+```bash
 ryu-manager firewall.py
+```
 
-------------------------------------------------------------------------
-
-## Start the Network Topology
+### 3. Start the Network Topology
 In a second terminal, launch the Mininet environment:
-
+```bash
 sudo mn --controller=remote,ip=127.0.0.1,port=6633 --mac
+```
 
-------------------------------------------------------------------------
-
-## Verify Flow Tables
+### 4. Verify Flow Tables
 Check the hardware-level rules pushed by the controller:
-
+```bash
 mininet> sh ovs-ofctl -O OpenFlow13 dump-flows s1
+```
 
-------------------------------------------------------------------------
-
-## Cleanup
+### 5. Cleanup
 Always clear the Mininet state after execution:
-
+```bash
 sudo mn -c
+```
 
-------------------------------------------------------------------------
+---
 
-# Proof of Execution (Screenshots and Logs)
+## Expected Output & Proof of Execution
 
+### Flow Tables:
 ![Flow Table](screenshots/flow_table.png)
-Flow Tables: Output confirms the installation of high-priority flow rules (Priority 30) for TCP Port 80, ensuring unauthorized traffic is dropped at the switch level.
 
+Output confirms the installation of high-priority flow rules (Priority 30) for TCP Port 80, ensuring unauthorized traffic is dropped at the switch level.
+
+### Ping Results: 
 ![Connectivity](screenshots/connectivity.png)
-Ping Results: h1 ping h2 shows a 0% packet loss, confirming that general network connectivity is maintained for allowed protocols.
 
+h1 ping h2 shows a 0% packet loss, confirming that general network connectivity is maintained for allowed protocols.
+
+
+333 Performance Metrics: 
 ![Observation](screenshots/observation.png)
-Performance Metrics: The iperf results show high-speed throughput (19.4 Gbits/sec), proving the firewall logic does not bottleneck the network performance.
 
+The iperf results show high-speed throughput (19.4 Gbits/sec), proving the firewall logic does not bottleneck the network performance.
+
+
+### Wireshark Analysis: 
 ![Wireshark Analysis](screenshots/wireshark.png)
-Wireshark Analysis: Packet capture shows TCP SYN retransmissions from Host 1. This confirms the switch is dropping the packets silently without sending a reset, successfully blocking the HTTP handshake.
 
+Packet capture shows TCP SYN retransmissions from Host 1. This confirms the switch is dropping the packets silently without sending a reset, successfully blocking the HTTP handshake.
+
+
+### Controller Status: 
 ![Blocking Controller](screenshots/blocking_controller.png)
-Controller Status: The Ryu controller terminal shows the active monitoring and instantiation of the firewall application.
 
+The Ryu controller terminal shows the active monitoring and instantiation of the firewall application.
+
+
+### Functional Correctness: 
 ![Blocking Mininet](screenshots/blocking_mininet.png)
-Functional Correctness: The Mininet console shows the h1 curl command hanging, demonstrating successful blocking of HTTP traffic for the unauthorized host.
 
-------------------------------------------------------------------------
+The Mininet console shows the h1 curl command hanging, demonstrating successful blocking of HTTP traffic for the unauthorized host.
 
-# Engineering Analysis
 
-1. Flow Rule Logic
-The firewall uses a Match-Action pipeline. When a packet matches the criteria (Src MAC: h1, Proto: TCP, Dst Port: 80), the action list is left empty, forcing the switch to drop the packet at the hardware level.
 
-2. Priority Management
-We assigned a Priority of 30 to security rules. This ensures they are evaluated before the default learning-switch rules (Priority 0), preventing unauthorized packets from being forwarded.
+---
 
-3. Performance and Latency
-Testing showed an average RTT of 0.117 ms. This indicates that proactive rule installation minimizes the performance impact typically associated with SDN controllers.
+## References and Citations
+1.  **Ryu SDN Framework:** Official Documentation for `SimpleSwitch13`.
+2.  **OpenFlow Specification:** Version 1.3.0 protocol primitives.
+3.  **Mininet Walkthrough:** Documentation for custom topologies and remote controllers.
 
-------------------------------------------------------------------------
+---
 
-# Design Decisions and Tradeoffs
-
-Tradeoff: Proactive vs. Reactive Rules
-- Choice: Proactive.
-- Reason: Rules are installed at handshake to avoid the PacketIn delay, ensuring the firewall does not bottleneck the network.
-
-Tradeoff: Silent Drop vs. Reject
-- Choice: Silent Drop.
-- Reason: By not sending an ICMP unreachable message, we increase security by not acknowledging the firewalls presence to potential attackers.
-
-------------------------------------------------------------------------
-
-# References and Citations
-
-1. Ryu SDN Framework: Official Documentation 
-2. OpenFlow Switch Specification: Version 1.3.0
-3. Mininet Walkthrough: SimpleSwitch13 implementation guides.
-
-------------------------------------------------------------------------
-
-# Conclusion
-
-This project successfully fulfills the requirement for a functional SDN Firewall. By utilizing Python and the OpenFlow protocol, we achieved granular control over network traffic, proving that software-defined logic can effectively replace rigid hardware security configurations.
+## Conclusion
+This project successfully demonstrates a functional SDN Firewall. By utilizing Python and the OpenFlow protocol, we achieved granular control over network traffic, proving that software-defined logic can effectively replace rigid, traditional hardware security configurations.
